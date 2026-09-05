@@ -1,6 +1,6 @@
 {
   "name": "@pify/todo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The agent working-memory checklist: CC TodoWrite-style complete-replacement writes, next-item surfacing, live widget",
   "keywords": [
     "pi-package",
