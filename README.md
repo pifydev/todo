@@ -8,7 +8,8 @@ Part of the [Pify suite](https://github.com/pifydev). Install with [`pify instal
 
 - **`todo_write`** — the agent maintains its checklist by sending the complete list each call (`content` + `pending`/`in_progress`/`completed`). Invalid entries drop with warnings; more than one `in_progress` warns but is allowed (parallel subagent work).
 - **Next-item surfacing** — completing an item makes the tool echo `Completed: X. Next up: Y`, so the agent's attention lands on the right thing without re-reading the plan.
-- **Live widget** — `☰ todo 2/5` with `✔` done (dim), `▸` in progress (bold), `◻` pending; `/todos` prints the list.
+- **Live widget** — `☰ todo 2/5` with `✔` done (dim), `▸` in progress (bold), `◻` pending. Past ten items the window follows the active item instead of the top of the list (v0.2), so what you're working on is always on screen: `… +4 above` / `… +2 more`.
+- **`/todos [status | next | clear]`** (v0.2) — `next` answers "what now?", `clear` drops a stale list that would otherwise keep nagging the agent for the rest of the session.
 - **Branch-aware persistence for free** — snapshot entries with last-wins replay: the list survives `/reload` and compaction, and switching session branches shows the right list for that branch.
 
 ## todo vs task

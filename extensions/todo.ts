@@ -28,6 +28,7 @@ import {
   validateItems,
   type TodoItem,
 } from "../src/todo.ts";
+import { parseTodoRoute, routeText } from "../src/route.ts";
 import { buildWidgetLines } from "../src/widget.ts";
 
 type UiContext = ExtensionContext;
@@ -108,9 +109,15 @@ export default function todo(pi: ExtensionAPI) {
   });
 
   pi.registerCommand("todos", {
-    description: "Show the agent's working todo list",
-    handler: async (_args, ctx) => {
-      if (ctx.hasUI) ctx.ui.notify(summary(items), "info");
+    description: "The agent's working todo list: /todos [status | next | clear]",
+    handler: async (args, ctx) => {
+      const outcome = routeText(parseTodoRoute(args ?? ""), items);
+      if (outcome.clear) {
+        items = [];
+        pi.appendEntry(TODO_STATE, { items });
+        renderWidget(ctx as UiContext);
+      }
+      if (ctx.hasUI) ctx.ui.notify(outcome.text, outcome.level);
     },
   });
 }

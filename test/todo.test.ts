@@ -11,7 +11,8 @@ import {
   validateItems,
   type TodoItem,
 } from "../src/todo.ts";
-import { buildWidgetLines, type ThemeLike } from "../src/widget.ts";
+import { buildWidgetLines, visibleWindow, type ThemeLike } from "../src/widget.ts";
+import { parseTodoRoute, routeText } from "../src/route.ts";
 
 const theme: ThemeLike = { fg: (_c, t) => t, bold: (t) => t };
 
@@ -119,4 +120,64 @@ test("widget renders statuses, count, and cap; empty renders nothing", () => {
   assert.ok(text.includes("▸ doing"));
   assert.ok(text.includes("+3 more"));
   assert.deepEqual(buildWidgetLines([], theme), []);
+});
+
+test("v0.2 visibleWindow keeps the active item in frame", () => {
+  const items: TodoItem[] = Array.from({ length: 15 }, (_, i) => ({
+    content: `item ${i + 1}`,
+    status: i < 11 ? "completed" : "pending",
+  }));
+  items[11]!.status = "in_progress";
+
+  const win = visibleWindow(items, 10);
+  assert.equal(win.shown.length, 10);
+  assert.ok(win.shown.some((i) => i.status === "in_progress"));
+  assert.equal(win.before + win.shown.length + win.after, items.length);
+
+  // short lists are shown whole, with no markers
+  assert.deepEqual(visibleWindow(items.slice(0, 4), 10), { shown: items.slice(0, 4), before: 0, after: 0 });
+
+  // an all-done list clamps to the end rather than running off it
+  const done = items.map((i) => ({ ...i, status: "completed" as const }));
+  const tail = visibleWindow(done, 10);
+  assert.equal(tail.shown.length, 10);
+  assert.equal(tail.before + tail.after, 5);
+});
+
+test("v0.2 widget renders the above/more markers", () => {
+  const items: TodoItem[] = Array.from({ length: 15 }, (_, i) => ({
+    content: `item ${i + 1}`,
+    status: i < 12 ? "completed" : "pending",
+  }));
+  const text = buildWidgetLines(items, theme).join("\n");
+  assert.ok(text.includes("above"));
+  assert.ok(text.includes("item 13"));
+});
+
+test("v0.2 /todos routes parse and render", () => {
+  assert.deepEqual(parseTodoRoute(""), { kind: "status" });
+  assert.deepEqual(parseTodoRoute("  NEXT "), { kind: "next" });
+  assert.deepEqual(parseTodoRoute("clear"), { kind: "clear" });
+  assert.deepEqual(parseTodoRoute("wat"), { kind: "unknown", input: "wat" });
+
+  const items: TodoItem[] = [
+    { content: "write tests", status: "completed" },
+    { content: "ship it", status: "in_progress" },
+  ];
+  assert.ok(routeText(parseTodoRoute("next"), items).text.includes("ship it (in progress)"));
+  assert.ok(routeText(parseTodoRoute(""), items).text.includes("1/2 done"));
+
+  const cleared = routeText(parseTodoRoute("clear"), items);
+  assert.equal(cleared.clear, true);
+  assert.ok(cleared.text.includes("2"));
+  assert.equal(routeText(parseTodoRoute("clear"), []).clear, false);
+
+  const unknown = routeText(parseTodoRoute("wat"), items);
+  assert.equal(unknown.level, "warning");
+  assert.ok(unknown.text.includes("Usage:"));
+
+  assert.ok(routeText(parseTodoRoute("next"), []).text.includes("empty"));
+  assert.ok(
+    routeText(parseTodoRoute("next"), [{ content: "x", status: "completed" }]).text.includes("all items are done"),
+  );
 });
