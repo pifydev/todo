@@ -1,6 +1,6 @@
 ---
 name: todo
-description: Use for any work with 2+ distinct steps to keep a visible working checklist - explains todo_write discipline (complete replacement, one in_progress, immediate completion) and the boundary with the task tools
+description: Use for any work with 2+ distinct steps to keep a visible working checklist
 ---
 
 # Working todo list
