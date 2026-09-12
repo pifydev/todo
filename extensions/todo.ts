@@ -53,6 +53,7 @@ export default function todo(pi: ExtensionAPI) {
   pi.registerTool({
     name: "todo_write",
     label: "Todo list",
+    promptSnippet: "Keep a short checklist for the work in hand",
     description:
       "Replace the working todo list (complete replacement — send the FULL list every time). " +
       "Use for multi-step work: create items before starting, keep exactly one in_progress, mark " +
