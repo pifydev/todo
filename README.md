@@ -1,6 +1,6 @@
 # @pify/todo
 
-[![npm version](https://img.shields.io/npm/v/@pify/todo)](https://www.npmjs.com/package/@pify/todo) [![npm downloads](https://img.shields.io/npm/dm/@pify/todo)](https://www.npmjs.com/package/@pify/todo)
+[![CI](https://github.com/pifydev/todo/actions/workflows/ci.yml/badge.svg)](https://github.com/pifydev/todo/actions/workflows/ci.yml) [![npm version](https://img.shields.io/npm/v/@pify/todo)](https://www.npmjs.com/package/@pify/todo) [![npm downloads](https://img.shields.io/npm/dm/@pify/todo)](https://www.npmjs.com/package/@pify/todo)
 
 The agent's working-memory checklist for [pi](https://github.com/earendil-works/pi) — one tool, complete-replacement writes, a live widget, and next-item surfacing that keeps a long task from drifting.
 
